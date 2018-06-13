@@ -40,7 +40,6 @@ Such a model for pipeline supply would be beneficial when considering developmen
 
 ### SDE Solutions to PDEs
 
-<<<<<<< HEAD
 Stochastic solutions to PDEs commonly used to model production from oil and gas wells
 
 There are two main techniques to model production from oil and gas wells: physics based 3D simulations and simple PDE approximations.  Simple PDE approximations are the more commonly used for economic calculations, especially those with compact analytical solutions.  For example, late life wells produced with a constant pressure are often modelled using a simple exponential relationship, $\frac{dq}{dt} = -D q$ where $q$ is the flow rate and $D$ is a constant rate of decline.  The parameters of these models cannot be precisely determined a priori, nor can they be estimated with precision due to the difficulty in precisely controlling producing conditions for accurate flow measurements.  As such, forecasts are uncertain.  Modelling the parameters as stochastic processes and solving the resulting SDE using Ito's Lemma.  Common PDEs used to forecast production include the following:
@@ -67,10 +66,3 @@ $$\frac{dq}{dt} = -\left( mt^{-1}-at^{-m}\right) q$$
 
 Stage two of this problem is to define stochastic process to model net cashflow, including royalties.  Net cashflow will be revenue minus expenses and taxes.  Revenues will be a simple multiple of instantenous volume produced and instantenous price.  Operating expenses will be a linear function of time plus a simple multiple of instanenous volume produced and processing cost.  Royalties (ie taxes) will be function of average rate and price over an accounting interval, typically a month.
 
-=======
-
-
-while others represent what I think are novel applications of SDE methods within the industry (estimating the uncertainty in forecasts of hydrocarbon production by solving common reservoir engineering PDE models within an SDE framework).
-
-$$\sqrt{t}$$
->>>>>>> 5a6cfb653b07f2ff4a52f1789b717f354f94902c
