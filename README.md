@@ -18,7 +18,7 @@ Differential equations, stochastic modelling, statistical models, time series an
 
 Many aspects of the oil and gas industry are subject to economic uncertainty: success in finding oil and gas reserves is highly unpredictable, productivity of an individual well can change in seemingly random ways, markets for products can move unexpectedly, future prices and interest rates are unknown, among other challenges. Useful economic models need to account for these uncertainties. Stochastic models provide an approach to these problems by treating certain unknown parameters as random variables and performing an in-depth analysis that takes into account this uncertainty.
 
-Stochastic differential equations (SDEs) are one useful method whose application are of interest to oil and gas economic problems. As most economic analysis is currently conducted using deterministic discounted cash flow models, there is much scope of innovation and experimentation. In particular, there is much scope for improving how uncertainty is mathematically modelled. In these project, we are interested four different general areas:
+Stochastic differential equations (SDEs) are one useful method whose application are of interest to oil and gas economic problems. As most economic analysis is currently conducted using deterministic discounted cash flow models, there is much scope of innovation and experimentation. In particular, there is much scope for improving how uncertainty is mathematically modelled. In this project, we are interested four different general areas:
 
 * Econometrics
 * Real Options Analysis
