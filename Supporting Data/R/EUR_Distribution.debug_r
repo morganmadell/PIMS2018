@@ -1,0 +1,159 @@
+library(rstan)
+stanmodelcode <- "
+  data {
+    int<lower=0> N;
+    int<lower=0> y[N];
+  }
+parameters {
+  real<lower=0.00001> Theta;
+}
+model {
+  Theta ~ gamma(4, 1000);
+  for (n in 1:N)
+    y[n] ~ exponential(Theta);
+}
+generated quantities{
+  real y_pred;
+  y_pred <- exponential_rng(Theta);
+}
+"
+
+stanDso <- stan_model(model_code = stanmodelcode) 
+#EUR.obs <- c(100, 950, 450)
+EUR.obs1 <- round(head(subset(well_results,EUR_harm>0)$EUR_harm[,],5))
+EUR.obs2 <- round(head(subset(well_results,EUR_harm>0)$EUR_harm[,],10))
+EUR.obs3 <- round(head(subset(well_results,EUR_harm>0)$EUR_harm[,],20))
+EUR.obs4 <- round(head(subset(well_results,EUR_harm>0)$EUR_harm[,],100))
+EUR.obs5 <- round(head(subset(well_results,EUR_harm>0)$EUR_harm[,],200))
+EUR.obs6 <- round(head(subset(well_results,EUR_harm>0)$EUR_harm[,],500))
+EUR.obs7 <- round(head(subset(well_results,EUR_harm>0)$EUR_harm[,],1000))
+EUR.obs8 <- round(head(subset(well_results,EUR_harm>0)$EUR_harm[,],2000))
+
+N1 <- length(EUR.obs1)
+dat1 <- list(N = N1, y = EUR.obs1); 
+N2 <- length(EUR.obs2)
+dat2 <- list(N = N2, y = EUR.obs2); 
+N3 <- length(EUR.obs3)
+dat3 <- list(N = N3, y = EUR.obs3); 
+N4 <- length(EUR.obs4)
+dat4 <- list(N = N4, y = EUR.obs4); 
+N5 <- length(EUR.obs5)
+dat5 <- list(N = N5, y = EUR.obs5); 
+N6 <- length(EUR.obs6)
+dat6 <- list(N = N6, y = EUR.obs6); 
+N7 <- length(EUR.obs7)
+dat7 <- list(N = N7, y = EUR.obs7); 
+N8 <- length(EUR.obs8)
+dat8 <- list(N = N8, y = EUR.obs8); 
+
+fit1 <- sampling(stanDso, data = dat1, iter = 10000, warmup=200) 
+fit2 <- sampling(stanDso, data = dat2, iter = 10000, warmup=200) 
+fit3 <- sampling(stanDso, data = dat3, iter = 10000, warmup=200) 
+fit4 <- sampling(stanDso, data = dat4, iter = 10000, warmup=200) 
+fit5 <- sampling(stanDso, data = dat5, iter = 10000, warmup=200) 
+fit6 <- sampling(stanDso, data = dat6, iter = 10000, warmup=200) 
+fit7 <- sampling(stanDso, data = dat7, iter = 10000, warmup=200) 
+fit8 <- sampling(stanDso, data = dat8, iter = 10000, warmup=200) 
+fit8
+## Inference for Stan model: stanmodelcode.
+## 4 chains, each with iter=10000; warmup=200; thin=1; 
+## post-warmup draws per chain=9800, total post-warmup draws=39200.
+## 
+##          mean se_mean     sd   2.5%    25%    50%    75%   97.5% n_eff Rhat
+## Theta    0.00    0.00   0.00   0.00   0.00   0.00   0.00    0.01 13756    1
+## y_pred 416.86    2.85 492.28   8.83 106.34 262.70 542.47 1730.55 29773    1
+## lp__   -48.65    0.01   0.70 -50.68 -48.83 -48.38 -48.20  -48.15 14203    1
+## 
+## Samples were drawn using NUTS(diag_e) at Tue May 19 06:06:08 2015.
+## For each parameter, n_eff is a crude measure of effective sample size,
+## and Rhat is the potential scale reduction factor on split chains (at 
+## convergence, Rhat=1).
+
+Theta8 <- extract(fit8, 'Theta')
+Theta8 <- unlist(Theta8, use.names=FALSE)
+y_pred8 <- extract(fit8, 'y_pred')
+y_pred8 <- unlist(y_pred8, use.names=FALSE)
+
+## Analytical hyper-parameters
+prior.alpha <- 4
+prior.beta <- 1000
+posterior.alpha1 <- prior.alpha + N1
+posterior.beta1 <- prior.beta + sum(EUR.obs1)
+posterior.alpha2 <- prior.alpha + N2
+posterior.beta2 <- prior.beta + sum(EUR.obs2)
+posterior.alpha3 <- prior.alpha + N3
+posterior.beta3 <- prior.beta + sum(EUR.obs3)
+posterior.alpha4 <- prior.alpha + N4
+posterior.beta4 <- prior.beta + sum(EUR.obs4)
+posterior.alpha5 <- prior.alpha + N5
+posterior.beta5 <- prior.beta + sum(EUR.obs5)
+posterior.alpha6 <- prior.alpha + N6
+posterior.beta6 <- prior.beta + sum(EUR.obs6)
+posterior.alpha7 <- prior.alpha + N7
+posterior.beta7 <- prior.beta + sum(EUR.obs7)
+posterior.alpha8 <- prior.alpha + N8
+posterior.beta8 <- prior.beta + sum(EUR.obs8)
+
+op <- par(mfrow=c(1,2))
+# Simulated posterior parameter
+plot(density(Theta8), xlim=c(0,0.01),
+     xlab=expression(paste("Distribution Parameter (", Theta, ")")), col=grey(0, 0.8),
+     main="Parameter distribution")
+# Analytical posterior parameter
+curve(dgamma(x, posterior.alpha1, posterior.beta1), 
+      add=TRUE, col="light blue", lwd=1.5)
+curve(dgamma(x, posterior.alpha2, posterior.beta2), 
+      add=TRUE, col="light blue", lwd=1.5)
+curve(dgamma(x, posterior.alpha3, posterior.beta3), 
+      add=TRUE, col="light blue", lwd=1.5)
+curve(dgamma(x, posterior.alpha4, posterior.beta4), 
+      add=TRUE, col="light blue", lwd=1.5)
+curve(dgamma(x, posterior.alpha5, posterior.beta5), 
+      add=TRUE, col="light blue", lwd=1.5)
+curve(dgamma(x, posterior.alpha6, posterior.beta6), 
+      add=TRUE, col="light blue", lwd=1.5)
+curve(dgamma(x, posterior.alpha7, posterior.beta7), 
+      add=TRUE, col="light blue", lwd=1.5)
+curve(dgamma(x, posterior.alpha8, posterior.beta8), 
+      add=TRUE, col=4, lty=2, lwd=1.5)
+# Analytical prior parameter
+curve(dgamma(x, prior.alpha, prior.beta), 
+      add=TRUE, col=2)
+legend(x="topright", col=c(2, "light blue", 4, grey(0, 0.8)), lty=c(1,1,2,1), bty="n",
+       legend=c("Prior", "Intermediate posterior", "Analytical posterior", "Sampling posterior"))
+
+# Simulated posterior predictive
+plot(density(y_pred8), xlim=c(1,2000),
+     xlab="EUR", col=grey(0, 0.8),
+     main="Predicitive distribution")
+# Analytical posterior predictive
+library(actuar) # Required for pareto distribution
+curve(dpareto(x, posterior.alpha1, posterior.beta1), 
+      add=TRUE, col="light blue", lwd=1.5)
+curve(dpareto(x, posterior.alpha2, posterior.beta2), 
+      add=TRUE, col="light blue", lwd=1.5)
+curve(dpareto(x, posterior.alpha3, posterior.beta3), 
+      add=TRUE, col="light blue", lwd=1.5)
+curve(dpareto(x, posterior.alpha4, posterior.beta4), 
+      add=TRUE, col="light blue", lwd=1.5)
+curve(dpareto(x, posterior.alpha5, posterior.beta5), 
+      add=TRUE, col="light blue", lwd=1.5)
+curve(dpareto(x, posterior.alpha6, posterior.beta6), 
+      add=TRUE, col="light blue", lwd=1.5)
+curve(dpareto(x, posterior.alpha7, posterior.beta7), 
+      add=TRUE, col="light blue", lwd=1.5)
+curve(dpareto(x, posterior.alpha8, posterior.beta8), 
+      add=TRUE, col=4, lwd=1.5, lty=2)
+# Analytical prior predictive
+curve(dpareto(x, prior.alpha, prior.beta), 
+      add=TRUE, col=2)
+legend(x="topright", col=c(2, "light blue", 4, grey(0, 0.8)), lty=c(1,2,1), bty="n",
+       legend=c("Prior", "Intermediate posterior","Analytical posterior", "Sampling posterior"))
+par(op)
+
+# Review quantiles and probabilities
+qpareto(0.75, prior.alpha, prior.beta)
+qpareto(0.75, posterior.alpha, posterior.beta)
+quantile(y_pred, 0.75)
+ppareto(950, posterior.alpha, posterior.beta)
+ecdf(y_pred)(950)
