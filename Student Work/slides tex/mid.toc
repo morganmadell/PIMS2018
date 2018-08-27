@@ -1,0 +1,4 @@
+\babel@toc {english}{}
+\beamer@sectionintoc {1}{1.Introduction}{3}{0}{1}
+\beamer@sectionintoc {2}{2.Modeling and Estimation}{11}{0}{2}
+\beamer@sectionintoc {3}{3. Summary}{31}{0}{3}
